@@ -457,7 +457,7 @@ $$
 
 $$
 \begin{align*}
-EA&=(IX)+A \\
+EA&=A+(IX)\\
 IX&\leftarrow IX+1
 \end{align*}
 $$

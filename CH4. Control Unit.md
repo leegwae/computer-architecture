@@ -26,6 +26,8 @@
 
 ## 4.2 제어 유닛의 구조
 
+<img src=".\Images\4-1.PNG" alt="4-1" style="zoom:30%;" />
+
 **제어 유닛의 구성 요소**
 
 - (1) **명령어 해독기(instruction decoder)**: 명령어 레지스터(IR)로부터 들어오는 <u>명령어의 연산 코드를 해독</u>하여, 해당 연산을 수행하기 위한 <u>루틴의 시작 주소를 결정</u>
@@ -49,6 +51,8 @@
 
 
 
+<img src=".\Images\4-2.PNG" alt="4-2" style="zoom:33%;" />
+
 **CPU에 마이크로프로그램 루틴 저장하기**
 
 (예) 마이크로프로그램 루틴을 제어 기억장치에 저장할 때
@@ -61,6 +65,8 @@
 
 **인출 사이클에서 명령어 해독하기**
 
+<img src=".\Images\4-3.PNG" alt="4-3" style="zoom:33%;" />
+
 - 인출 사이클 동안 IR로 적재된 명령어 비트들 중 연산 코드가 제어 유닛의 명령어 해독기로 들어옴.
 - "**명령어를 해독한다**"의 의미: 연산 코드가 지정하는 연산을 위한 <u>실행 사이클 루틴의 시작 주소를 찾는 것</u>.
 - **사상(mapping)**을 통해 해독하기: 명령어의 연산 코드와 특정 비트 패턴을 혼합하여 실행 사이클 루틴의 시작 주소를 찾아낸다.
@@ -71,7 +77,7 @@
 
 ## 4.3 마이크로명령어의 형식
 
-(예) |연산필드 1(3 bit)| 연산필드2(3 bit)|조건필드(2 bit)|분기필드(2 bit)|주소필드(ADF) (7bit)|
+(예) [ 연산필드 1(3 bit) | 연산필드2(3 bit) | 조건필드(2 bit) | 분기필드(2 bit) | 주소필드(ADF) (7bit) ]
 
 - 연산 피드가 두 개인 경우, 두 개의 마이크로연산을 동시에 수행할 수 있다.
 - **조건(CD) 필드**: 분기에 사용될 조건 플래그를 지정한다.
@@ -112,6 +118,10 @@
 
 
 
+
+
+
+
 **[표 4-2] 조건 필드의 코드 지정**
 
 | 코드 | 조건              | 기호 | 설명                                                         |
@@ -131,6 +141,8 @@
 | 01   | $\mathrm{CALL}$ | 조건부 호출(conditional call)<br />조건 = 1이면, $\mathrm{SBR\leftarrow CAR+1, CAR\leftarrow ADF}$<br />조건 = 0이면, $\mathrm{CAR \leftarrow CAR+1}$<br />조건 필드 값이 00이면 무조건 호출(unconditional call) |
 | 10   | $\mathrm{RET}$  | $\mathrm{CAR\leftarrow SBR}$ (서브루틴으로부터의 복귀)       |
 | 11   | $\mathrm{MAP}$  | $\mathrm{CAR(1)\leftarrow 1, CAR(2-5)\leftarrow IR(op), CAR(6, 7)\leftarrow 0}$<br />== 사상으로 얻어진 주소를 CAR에 적재 |
+
+
 
 
 
@@ -173,6 +185,8 @@ $$
 &\mathrm{BRTIR} &\mathrm{U\ RET;\ } &\mathrm{IR}(addr)\mathrm{\leftarrow MBR,\ }실행 \ 사이클\ 루틴으로\ 복귀 \\
 \end{align*}
 $$
+
+
 **간접 사이클 루틴의 2진 비트 패턴**
 
 | 주소    | $\mu$-ops | CD   | BR   | ADF     |
@@ -181,9 +195,9 @@ $$
 | 0000101 | 100 000   | 00   | 00   | 0000110 |
 | 0000110 | 110 000   | 00   | 10   | 0000000 |
 
-- 명령어가 간접 주소지정 방식을 사용하는 경우 명령어 내 $I$ 비트가 1로 세팅되어있다.
+- 명령어가 간접 주소지정 방식을 사용하는 경우 명령어 내 $I$ 비트가 1로 세팅.
 - $\mathrm{IR}$에 적재된 명령어의 주소 필드가 가리키는 기억장치 위치로부터 실제 주소를 인출하여, 다시 $\mathrm{IR}$의 주소 필드에 적재한다.
-- $\mathrm{RET}$은 $\mathrm{SBR}$에 저장된 원래의 제어 기억장치 주소를 $\mathrm{CAR}$에 적재하여 수행된다.
+- $\mathrm{RET}$은 $\mathrm{SBR}$에 저장된 원래의 제어 기억장치 주소를 $\mathrm{CAR}$에 적재하여 수행.
 
 
 
@@ -215,16 +229,17 @@ $$
 &\mathrm{IRTAR} &\mathrm{U} &&\mathrm{JMP} &&\mathrm{NEXT} &&\mathrm{;MAR\leftarrow IR(addr)} \\
 &\mathrm{READ} &\mathrm{U} &&\mathrm{JMP} &&\mathrm{NEXT} &&\mathrm{;MBR\leftarrow M[MAR]} \\
 &\mathrm{BRTAC} &\mathrm{U} &&\mathrm{JMP} &&\mathrm{FETCH} &&\mathrm{;AC\leftarrow MBR} \\
-\\
+\end{align*}
+$$
 
-
+$$
+\begin{align*}
 &\mathrm{ORG\ 72} \\
 \mathrm{STORE:\quad} &\mathrm{NOP} &\mathrm{I} &&\mathrm{CALL} &&\mathrm{INDRT} &&\mathrm{;I=1이면\ 간접\ 사이클\ 루틴\ 호출} \\
 &\mathrm{IRTAR} &\mathrm{U} &&\mathrm{JMP} &&\mathrm{NEXT} &&\mathrm{;MAR\leftarrow IR(addr)} \\
 &\mathrm{ACTBR} &\mathrm{U} &&\mathrm{JMP} &&\mathrm{NEXT} &&\mathrm{;MBR\leftarrow AC} \\
 &\mathrm{WRITE} &\mathrm{U} &&\mathrm{JMP} &&\mathrm{FETCH} &&\mathrm{;M[MAR]\leftarrow MBR} \\
 \\
-
 &\mathrm{ORG\ 76} \\
 \mathrm{ADD:\quad} &\mathrm{IRTAR} &\mathrm{U} &&\mathrm{JMP} &&\mathrm{NEXT} &&\mathrm{;MAR\leftarrow IR(addr)} \\
 &\mathrm{READ} &\mathrm{U} &&\mathrm{JMP} &&\mathrm{NEXT} &&\mathrm{;MBR\leftarrow M[MAR]} \\
@@ -256,23 +271,13 @@ $$
 
 
 
-**순서제어회로가 포함된 제어 유니트의 구성도**
-
-그림??
+<img src=".\Images\4-4.PNG" alt="4-4" style="zoom:30%;" />
 
 
 
 **[표 4-5] 주소 선택 회로의 입력 및 출력 신호들**
 
-| BR    |       | 조건 | MUX1  | 선택  | SBR  | CAR로 적재될 MUX1의 입력 | 설명                                                         |
-| ----- | ----- | ---- | ----- | ----- | ---- | ------------------------ | ------------------------------------------------------------ |
-| $l_1$ | $l_0$ | $C$  | $S_1$ | $S_0$ | $L$  |                          |                                                              |
-| 0     | 0     | 0    | 0     | 0     | 0    | 0                        | $\mathrm{CAR}\leftarrow \mathrm{CAR}+1$                      |
-| 0     | 0     | 1    | 0     | 1     | 0    | 1                        | $\mathrm{CAR}\leftarrow \mathrm{ADF<Jump>}$                  |
-| 0     | 1     | 0    | 0     | 0     | 0    | 0                        | $\mathrm{CAR}\leftarrow \mathrm{CAR}+1$                      |
-| 0     | 1     | 1    | 0     | 1     | 1    | 1                        | $\mathrm{SBR}\leftarrow \mathrm{CAR}+1,\ \mathrm{CAR\leftarrow ADF}$ |
-| 1     | 0     | x    | 1     | 0     | 0    | 2                        | $\mathrm{CAR}\leftarrow \mathrm{SBR<Return>}$                |
-| 1     | 1     | x    | 1     | 1     | 0    | 3                        | $\mathrm{CAR}\leftarrow \mathrm{1XXXX00<Mapping>}$           |
+<img src=".\Images\4-6.PNG" alt="4-6" style="zoom:30%;" />
 
 
 
@@ -307,7 +312,7 @@ $$
 - (장점) 마이크로명령어의 길이(비트 수) 최소화(제어 기억장치 용량 감소)
 - (단점) 해독 동작에 걸리는 만큼의 지연 시간 발생
 
-
+<img src=".\Images\4-5.PNG" alt="4-5" style="zoom:30%;" />
 
 **(2) 수평적 마이크로프로그래밍(horizontal microprogramming)**
 
